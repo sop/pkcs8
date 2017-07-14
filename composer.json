@@ -19,12 +19,11 @@
 	"require": {
 		"php": ">=5.6.3",
 		"sop/asn1": "^2.0.0",
-		"sop/crypto-encoding": "dev-master",
-		"sop/crypto-types": "dev-master",
-		"sop/crypto-bridge": "dev-master",
-		"sop/pkcs5": "dev-master"
+		"sop/crypto-encoding": "0.1.0",
+		"sop/crypto-types": "0.1.0",
+		"sop/crypto-bridge": "0.1.0",
+		"sop/pkcs5": "0.1.0"
 	},
-	"minimum-stability": "dev",
 	"autoload": {
 		"psr-4": {
 			"Sop\\PKCS8\\": "lib/PKCS8"
