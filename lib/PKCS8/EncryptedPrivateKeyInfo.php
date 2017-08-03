@@ -144,11 +144,11 @@ class EncryptedPrivateKeyInfo
      * Decrypt PrivateKeyInfo from the encrypted data using password based
      * encryption.
      *
-     * @param string $password
-     * @param Crypto $crypto
+     * @param string $password Password
+     * @param Crypto|null $crypto Crypto engine, use default if not set
      * @return PrivateKeyInfo
      */
-    public function decryptWithPassword($password, Crypto $crypto)
+    public function decryptWithPassword($password, Crypto $crypto = null)
     {
         $ai = $this->_algo;
         if (!($ai instanceof PBEAlgorithmIdentifier)) {
@@ -173,11 +173,11 @@ class EncryptedPrivateKeyInfo
      * @param PrivateKeyInfo $pki Private key info
      * @param PBEAlgorithmIdentifier $algo Encryption algorithm
      * @param string $password Password
-     * @param Crypto $crypto
+     * @param Crypto|null $crypto Crypto engine, use default if not set
      * @return self
      */
     public static function encryptWithPassword(PrivateKeyInfo $pki,
-        PBEAlgorithmIdentifier $algo, $password, Crypto $crypto)
+        PBEAlgorithmIdentifier $algo, $password, Crypto $crypto = null)
     {
         $scheme = PBEScheme::fromAlgorithmIdentifier($algo, $crypto);
         $ciphertext = $scheme->encrypt($pki->toDER(), $password);
@@ -191,11 +191,11 @@ class EncryptedPrivateKeyInfo
      * @param PrivateKeyInfo $pki Private key info
      * @param PBEAlgorithmIdentifier $algo Encryption algorithm
      * @param string $key Key derived from a password
-     * @param Crypto $crypto
+     * @param Crypto|null $crypto Crypto engine, use default if not set
      * @return self
      */
     public static function encryptWithDerivedKey(PrivateKeyInfo $pki,
-        PBEAlgorithmIdentifier $algo, $key, Crypto $crypto)
+        PBEAlgorithmIdentifier $algo, $key, Crypto $crypto = null)
     {
         $scheme = PBEScheme::fromAlgorithmIdentifier($algo, $crypto);
         $ciphertext = $scheme->encryptWithKey($pki->toDER(), $key);

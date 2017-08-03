@@ -2,7 +2,6 @@
 use ASN1\Type\Constructed\Sequence;
 use ASN1\Type\Primitive\ObjectIdentifier;
 use ASN1\Type\Primitive\OctetString;
-use Sop\CryptoBridge\Crypto;
 use Sop\CryptoEncoding\PEM;
 use Sop\CryptoTypes\AlgorithmIdentifier\GenericAlgorithmIdentifier;
 use Sop\CryptoTypes\AlgorithmIdentifier\Cipher\AES256CBCAlgorithmIdentifier;
@@ -72,7 +71,7 @@ class EncryptedPrivateKeyInfoTest extends PHPUnit_Framework_TestCase
         $pki = PrivateKeyInfo::fromPEM(self::$_pem_pk);
         $algo = new PBEWithSHA1AndRC2CBCAlgorithmIdentifier($salt, $count);
         $epki = EncryptedPrivateKeyInfo::encryptWithPassword($pki, $algo,
-            self::PASSWORD, Crypto::getDefault());
+            self::PASSWORD);
         $this->assertInstanceOf(EncryptedPrivateKeyInfo::class, $epki);
         return $epki;
     }
@@ -108,7 +107,7 @@ class EncryptedPrivateKeyInfoTest extends PHPUnit_Framework_TestCase
      */
     public function testDecrypt(EncryptedPrivateKeyInfo $epki)
     {
-        $pki = $epki->decryptWithPassword(self::PASSWORD, Crypto::getDefault());
+        $pki = $epki->decryptWithPassword(self::PASSWORD);
         $this->assertInstanceOf(PrivateKeyInfo::class, $pki);
         return $pki;
     }
@@ -121,7 +120,7 @@ class EncryptedPrivateKeyInfoTest extends PHPUnit_Framework_TestCase
      */
     public function testDecryptFail(EncryptedPrivateKeyInfo $epki)
     {
-        $epki->decryptWithPassword("nope", Crypto::getDefault());
+        $epki->decryptWithPassword("nope");
     }
     
     /**
@@ -137,7 +136,7 @@ class EncryptedPrivateKeyInfoTest extends PHPUnit_Framework_TestCase
         $prop = $refl->getProperty("_algo");
         $prop->setAccessible(true);
         $prop->setValue($epki, new GenericAlgorithmIdentifier("1.3.6.1.3"));
-        $epki->decryptWithPassword("nope", Crypto::getDefault());
+        $epki->decryptWithPassword("nope");
     }
     
     /**
@@ -190,7 +189,7 @@ class EncryptedPrivateKeyInfoTest extends PHPUnit_Framework_TestCase
             new PBKDF2AlgorithmIdentifier($salt, $count),
             new DESEDE3CBCAlgorithmIdentifier($iv));
         $epki = EncryptedPrivateKeyInfo::encryptWithPassword($pki, $algo,
-            self::PASSWORD, Crypto::getDefault());
+            self::PASSWORD);
         $this->assertInstanceOf(EncryptedPrivateKeyInfo::class, $epki);
         return $epki;
     }
@@ -215,7 +214,7 @@ class EncryptedPrivateKeyInfoTest extends PHPUnit_Framework_TestCase
      */
     public function testDecryptV2(EncryptedPrivateKeyInfo $epki)
     {
-        $pki = $epki->decryptWithPassword(self::PASSWORD, Crypto::getDefault());
+        $pki = $epki->decryptWithPassword(self::PASSWORD);
         $this->assertInstanceOf(PrivateKeyInfo::class, $pki);
         return $pki;
     }
@@ -236,12 +235,11 @@ class EncryptedPrivateKeyInfoTest extends PHPUnit_Framework_TestCase
         $algo = new PBES2AlgorithmIdentifier(
             new PBKDF2AlgorithmIdentifier($salt, $count),
             new DESEDE3CBCAlgorithmIdentifier($iv));
-        $scheme = PBEScheme::fromAlgorithmIdentifier($algo, Crypto::getDefault());
+        $scheme = PBEScheme::fromAlgorithmIdentifier($algo);
         $key = $scheme->kdf()->derive(self::PASSWORD, $salt, $count,
             $algo->esAlgorithmIdentifier()
                 ->keySize());
-        $epki = EncryptedPrivateKeyInfo::encryptWithDerivedKey($pki, $algo, $key,
-            Crypto::getDefault());
+        $epki = EncryptedPrivateKeyInfo::encryptWithDerivedKey($pki, $algo, $key);
         $this->assertEquals($refkey->toDER(), $epki->toDER());
     }
     
@@ -274,7 +272,7 @@ class EncryptedPrivateKeyInfoTest extends PHPUnit_Framework_TestCase
             new PBKDF2AlgorithmIdentifier($salt, $count, null, $prf_algo),
             new AES256CBCAlgorithmIdentifier($iv));
         $epki = EncryptedPrivateKeyInfo::encryptWithPassword($pki, $algo,
-            self::PASSWORD, Crypto::getDefault());
+            self::PASSWORD);
         $this->assertInstanceOf(EncryptedPrivateKeyInfo::class, $epki);
         return $epki;
     }
@@ -299,7 +297,7 @@ class EncryptedPrivateKeyInfoTest extends PHPUnit_Framework_TestCase
      */
     public function testDecryptV2AES(EncryptedPrivateKeyInfo $epki)
     {
-        $pki = $epki->decryptWithPassword(self::PASSWORD, Crypto::getDefault());
+        $pki = $epki->decryptWithPassword(self::PASSWORD);
         $this->assertInstanceOf(PrivateKeyInfo::class, $pki);
         return $pki;
     }
