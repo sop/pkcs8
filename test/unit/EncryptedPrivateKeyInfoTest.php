@@ -1,7 +1,9 @@
 <?php
+
 use ASN1\Type\Constructed\Sequence;
 use ASN1\Type\Primitive\ObjectIdentifier;
 use ASN1\Type\Primitive\OctetString;
+use PHPUnit\Framework\TestCase;
 use Sop\CryptoEncoding\PEM;
 use Sop\CryptoTypes\AlgorithmIdentifier\GenericAlgorithmIdentifier;
 use Sop\CryptoTypes\AlgorithmIdentifier\Cipher\AES256CBCAlgorithmIdentifier;
@@ -14,12 +16,16 @@ use Sop\PKCS5\ASN1\AlgorithmIdentifier\PBEWithSHA1AndRC2CBCAlgorithmIdentifier;
 use Sop\PKCS5\ASN1\AlgorithmIdentifier\PBKDF2AlgorithmIdentifier;
 use Sop\PKCS8\EncryptedPrivateKeyInfo;
 
-class EncryptedPrivateKeyInfoTest extends PHPUnit_Framework_TestCase
+class EncryptedPrivateKeyInfoTest extends TestCase
 {
     const PASSWORD = "password";
+    
     private static $_pem_pk;
+    
     private static $_pem_v1;
+    
     private static $_pem_v2;
+    
     private static $_pem_v2_aes;
     
     /**

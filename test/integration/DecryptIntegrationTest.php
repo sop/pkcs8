@@ -1,10 +1,12 @@
 <?php
+
+use PHPUnit\Framework\TestCase;
 use Sop\CryptoBridge\Crypto;
 use Sop\CryptoEncoding\PEM;
 use Sop\CryptoTypes\Asymmetric\PrivateKeyInfo;
 use Sop\PKCS8\EncryptedPrivateKeyInfo;
 
-class DecryptIntegrationTest extends PHPUnit_Framework_TestCase
+class DecryptIntegrationTest extends TestCase
 {
     /**
      * @dataProvider provideKey
