@@ -17,12 +17,15 @@
 		}
 	],
 	"require": {
-		"php": ">=5.6.3",
-		"sop/asn1": "^2.0.0",
-		"sop/crypto-encoding": "^0.1.0",
-		"sop/crypto-types": "^0.1.0",
-		"sop/crypto-bridge": "^0.1.0",
-		"sop/pkcs5": "^0.1.1"
+		"php": ">=7.0",
+		"sop/asn1": "^3.2.0",
+		"sop/crypto-encoding": "^0.2.0",
+		"sop/crypto-types": "^0.2.1",
+		"sop/crypto-bridge": "^0.2.0",
+		"sop/pkcs5": "^0.2.0"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^6.4"
 	},
 	"autoload": {
 		"psr-4": {
