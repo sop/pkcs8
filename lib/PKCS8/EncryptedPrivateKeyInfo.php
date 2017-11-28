@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Sop\PKCS8;
 
 use ASN1\Type\Constructed\Sequence;
@@ -38,7 +40,8 @@ class EncryptedPrivateKeyInfo
      * @param EncryptionAlgorithmIdentifier $algo
      * @param string $data Ciphertext
      */
-    protected function __construct(EncryptionAlgorithmIdentifier $algo, $data)
+    protected function __construct(EncryptionAlgorithmIdentifier $algo,
+        string $data)
     {
         $this->_algo = $algo;
         $this->_data = $data;
@@ -51,7 +54,7 @@ class EncryptedPrivateKeyInfo
      * @throws \UnexpectedValueException
      * @return self
      */
-    public static function fromASN1(Sequence $seq)
+    public static function fromASN1(Sequence $seq): self
     {
         $algo = PBEAlgorithmIdentifier::fromASN1($seq->at(0)->asSequence());
         if (!($algo instanceof EncryptionAlgorithmIdentifier)) {
@@ -70,7 +73,7 @@ class EncryptedPrivateKeyInfo
      * @param string $data
      * @return self
      */
-    public static function fromDER($data)
+    public static function fromDER(string $data): self
     {
         return self::fromASN1(Sequence::fromDER($data));
     }
@@ -82,7 +85,7 @@ class EncryptedPrivateKeyInfo
      * @throws \UnexpectedValueException
      * @return self
      */
-    public static function fromPEM(PEM $pem)
+    public static function fromPEM(PEM $pem): self
     {
         if ($pem->type() != PEM::TYPE_ENCRYPTED_PRIVATE_KEY) {
             throw new \UnexpectedValueException("Invalid PEM type.");
@@ -95,7 +98,7 @@ class EncryptedPrivateKeyInfo
      *
      * @return EncryptionAlgorithmIdentifier
      */
-    public function encryptionAlgorithm()
+    public function encryptionAlgorithm(): EncryptionAlgorithmIdentifier
     {
         return $this->_algo;
     }
@@ -105,7 +108,7 @@ class EncryptedPrivateKeyInfo
      *
      * @return string
      */
-    public function encryptedData()
+    public function encryptedData(): string
     {
         return $this->_data;
     }
@@ -115,7 +118,7 @@ class EncryptedPrivateKeyInfo
      *
      * @return Sequence
      */
-    public function toASN1()
+    public function toASN1(): Sequence
     {
         return new Sequence($this->_algo->toASN1(), new OctetString($this->_data));
     }
@@ -125,7 +128,7 @@ class EncryptedPrivateKeyInfo
      *
      * @return string
      */
-    public function toDER()
+    public function toDER(): string
     {
         return $this->toASN1()->toDER();
     }
@@ -135,7 +138,7 @@ class EncryptedPrivateKeyInfo
      *
      * @return PEM
      */
-    public function toPEM()
+    public function toPEM(): PEM
     {
         return new PEM(PEM::TYPE_ENCRYPTED_PRIVATE_KEY, $this->toDER());
     }
@@ -148,7 +151,7 @@ class EncryptedPrivateKeyInfo
      * @param Crypto|null $crypto Crypto engine, use default if not set
      * @return PrivateKeyInfo
      */
-    public function decryptWithPassword($password, Crypto $crypto = null)
+    public function decryptWithPassword(string $password, Crypto $crypto = null): PrivateKeyInfo
     {
         $ai = $this->_algo;
         if (!($ai instanceof PBEAlgorithmIdentifier)) {
@@ -177,7 +180,7 @@ class EncryptedPrivateKeyInfo
      * @return self
      */
     public static function encryptWithPassword(PrivateKeyInfo $pki,
-        PBEAlgorithmIdentifier $algo, $password, Crypto $crypto = null)
+        PBEAlgorithmIdentifier $algo, string $password, Crypto $crypto = null): self
     {
         $scheme = PBEScheme::fromAlgorithmIdentifier($algo, $crypto);
         $ciphertext = $scheme->encrypt($pki->toDER(), $password);
@@ -195,7 +198,7 @@ class EncryptedPrivateKeyInfo
      * @return self
      */
     public static function encryptWithDerivedKey(PrivateKeyInfo $pki,
-        PBEAlgorithmIdentifier $algo, $key, Crypto $crypto = null)
+        PBEAlgorithmIdentifier $algo, string $key, Crypto $crypto = null): self
     {
         $scheme = PBEScheme::fromAlgorithmIdentifier($algo, $crypto);
         $ciphertext = $scheme->encryptWithKey($pki->toDER(), $key);
