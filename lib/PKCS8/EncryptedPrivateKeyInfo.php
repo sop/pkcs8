@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Sop\PKCS8;
 
+use ASN1\Type\UnspecifiedType;
 use ASN1\Type\Constructed\Sequence;
 use ASN1\Type\Primitive\OctetString;
 use Sop\CryptoBridge\Crypto;
@@ -75,7 +76,7 @@ class EncryptedPrivateKeyInfo
      */
     public static function fromDER(string $data): self
     {
-        return self::fromASN1(Sequence::fromDER($data));
+        return self::fromASN1(UnspecifiedType::fromDER($data)->asSequence());
     }
     
     /**
@@ -163,7 +164,8 @@ class EncryptedPrivateKeyInfo
         try {
             $scheme = PBEScheme::fromAlgorithmIdentifier($ai, $crypto);
             $data = $scheme->decrypt($this->_data, $password);
-            return PrivateKeyInfo::fromASN1(Sequence::fromDER($data));
+            return PrivateKeyInfo::fromASN1(
+                UnspecifiedType::fromDER($data)->asSequence());
         } catch (\RuntimeException $e) {
             throw new \RuntimeException("Failed to decrypt private key.", 0, $e);
         }
