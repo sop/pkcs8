@@ -8,6 +8,15 @@
 A PHP implementation of [PKCS #8](https://tools.ietf.org/html/rfc5208)
 encrypted private-key.
 
+## Requirements
+
+-   PHP >=7.0
+-   [sop/asn1](https://github.com/sop/asn1)
+-   [sop/crypto-encoding](https://github.com/sop/crypto-encoding)
+-   [sop/crypto-types](https://github.com/sop/crypto-types)
+-   [sop/crypto-bridge](https://github.com/sop/crypto-bridge)
+-   [sop/pkcs5](https://github.com/sop/pkcs5)
+
 ## Installation
 
 This library is available on
