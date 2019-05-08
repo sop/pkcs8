@@ -10,7 +10,7 @@ encrypted private-key.
 
 ## Requirements
 
--   PHP >=7.0
+-   PHP >=7.2
 -   [sop/asn1](https://github.com/sop/asn1)
 -   [sop/crypto-encoding](https://github.com/sop/crypto-encoding)
 -   [sop/crypto-types](https://github.com/sop/crypto-types)

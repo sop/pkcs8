@@ -1,59 +1,59 @@
 <?php
 
-use ASN1\Type\Constructed\Sequence;
-use ASN1\Type\Primitive\ObjectIdentifier;
-use ASN1\Type\Primitive\OctetString;
+declare(strict_types = 1);
+
 use PHPUnit\Framework\TestCase;
+use Sop\ASN1\Type\Constructed\Sequence;
+use Sop\ASN1\Type\Primitive\ObjectIdentifier;
+use Sop\ASN1\Type\Primitive\OctetString;
 use Sop\CryptoEncoding\PEM;
-use Sop\CryptoTypes\AlgorithmIdentifier\GenericAlgorithmIdentifier;
 use Sop\CryptoTypes\AlgorithmIdentifier\Cipher\AES256CBCAlgorithmIdentifier;
 use Sop\CryptoTypes\AlgorithmIdentifier\Cipher\DESEDE3CBCAlgorithmIdentifier;
+use Sop\CryptoTypes\AlgorithmIdentifier\GenericAlgorithmIdentifier;
 use Sop\CryptoTypes\Asymmetric\PrivateKeyInfo;
-use Sop\PKCS5\PBEScheme;
 use Sop\PKCS5\ASN1\AlgorithmIdentifier\PBEAlgorithmIdentifier;
 use Sop\PKCS5\ASN1\AlgorithmIdentifier\PBES2AlgorithmIdentifier;
 use Sop\PKCS5\ASN1\AlgorithmIdentifier\PBEWithSHA1AndRC2CBCAlgorithmIdentifier;
 use Sop\PKCS5\ASN1\AlgorithmIdentifier\PBKDF2AlgorithmIdentifier;
+use Sop\PKCS5\PBEScheme;
 use Sop\PKCS8\EncryptedPrivateKeyInfo;
 
+/**
+ * @internal
+ */
 class EncryptedPrivateKeyInfoTest extends TestCase
 {
-    const PASSWORD = "password";
-    
+    const PASSWORD = 'password';
+
     private static $_pem_pk;
-    
+
     private static $_pem_v1;
-    
+
     private static $_pem_v2;
-    
+
     private static $_pem_v2_aes;
-    
-    /**
-     */
-    public static function setUpBeforeClass()
+
+    public static function setUpBeforeClass(): void
     {
         self::$_pem_pk = PEM::fromFile(
-            TEST_ASSETS_DIR . "/pkcs8/private_key.pem");
+            TEST_ASSETS_DIR . '/pkcs8/private_key.pem');
         self::$_pem_v1 = PEM::fromFile(
-            TEST_ASSETS_DIR . "/pkcs8/key_PBE-SHA1-RC2-64.pem");
+            TEST_ASSETS_DIR . '/pkcs8/key_PBE-SHA1-RC2-64.pem');
         self::$_pem_v2 = PEM::fromFile(
-            TEST_ASSETS_DIR . "/pkcs8/key_v2_des3.pem");
+            TEST_ASSETS_DIR . '/pkcs8/key_v2_des3.pem');
         self::$_pem_v2_aes = PEM::fromFile(
-            TEST_ASSETS_DIR . "/pkcs8/key_v2_aes.pem");
+            TEST_ASSETS_DIR . '/pkcs8/key_v2_aes.pem');
     }
-    
-    /**
-     */
-    public static function tearDownAfterClass()
+
+    public static function tearDownAfterClass(): void
     {
         self::$_pem_pk = null;
         self::$_pem_v1 = null;
         self::$_pem_v2 = null;
         self::$_pem_v2_aes = null;
     }
-    
+
     /**
-     *
      * @return \Sop\PKCS8\EncryptedPrivateKeyInfo
      */
     public function testFromPEM()
@@ -62,7 +62,7 @@ class EncryptedPrivateKeyInfoTest extends TestCase
         $this->assertInstanceOf(EncryptedPrivateKeyInfo::class, $epki);
         return $epki;
     }
-    
+
     /**
      * @depends testFromPEM
      *
@@ -81,9 +81,9 @@ class EncryptedPrivateKeyInfoTest extends TestCase
         $this->assertInstanceOf(EncryptedPrivateKeyInfo::class, $epki);
         return $epki;
     }
-    
+
     /**
-     * Test that encrypt implementation produces key identical to reference
+     * Test that encrypt implementation produces key identical to reference.
      *
      * @depends testFromPEM
      * @depends testCreate
@@ -95,7 +95,7 @@ class EncryptedPrivateKeyInfoTest extends TestCase
     {
         $this->assertEquals($ref->toDER(), $new->toDER());
     }
-    
+
     /**
      * @depends testCreate
      *
@@ -103,9 +103,9 @@ class EncryptedPrivateKeyInfoTest extends TestCase
      */
     public function testEncryptedData(EncryptedPrivateKeyInfo $epki)
     {
-        $this->assertInternalType("string", $epki->encryptedData());
+        $this->assertIsString($epki->encryptedData());
     }
-    
+
     /**
      * @depends testCreate
      *
@@ -117,21 +117,20 @@ class EncryptedPrivateKeyInfoTest extends TestCase
         $this->assertInstanceOf(PrivateKeyInfo::class, $pki);
         return $pki;
     }
-    
+
     /**
      * @depends testCreate
-     * @expectedException RuntimeException
      *
      * @param EncryptedPrivateKeyInfo $epki
      */
     public function testDecryptFail(EncryptedPrivateKeyInfo $epki)
     {
-        $epki->decryptWithPassword("nope");
+        $this->expectException(\RuntimeException::class);
+        $epki->decryptWithPassword('nope');
     }
-    
+
     /**
      * @depends testCreate
-     * @expectedException RuntimeException
      *
      * @param EncryptedPrivateKeyInfo $epki
      */
@@ -139,12 +138,13 @@ class EncryptedPrivateKeyInfoTest extends TestCase
     {
         $epki = clone $epki;
         $refl = new ReflectionClass($epki);
-        $prop = $refl->getProperty("_algo");
+        $prop = $refl->getProperty('_algo');
         $prop->setAccessible(true);
-        $prop->setValue($epki, new GenericAlgorithmIdentifier("1.3.6.1.3"));
-        $epki->decryptWithPassword("nope");
+        $prop->setValue($epki, new GenericAlgorithmIdentifier('1.3.6.1.3'));
+        $this->expectException(\RuntimeException::class);
+        $epki->decryptWithPassword('nope');
     }
-    
+
     /**
      * @depends testCreate
      *
@@ -156,7 +156,7 @@ class EncryptedPrivateKeyInfoTest extends TestCase
         $this->assertInstanceOf(PEM::class, $pem);
         return $pem;
     }
-    
+
     /**
      * @depends testToPEM
      *
@@ -166,9 +166,8 @@ class EncryptedPrivateKeyInfoTest extends TestCase
     {
         $this->assertEquals(self::$_pem_v1, $pem);
     }
-    
+
     /**
-     *
      * @return EncryptedPrivateKeyInfo
      */
     public function testV2FromPEM()
@@ -177,7 +176,7 @@ class EncryptedPrivateKeyInfoTest extends TestCase
         $this->assertInstanceOf(EncryptedPrivateKeyInfo::class, $epki);
         return $epki;
     }
-    
+
     /**
      * @depends testV2FromPEM
      *
@@ -199,7 +198,7 @@ class EncryptedPrivateKeyInfoTest extends TestCase
         $this->assertInstanceOf(EncryptedPrivateKeyInfo::class, $epki);
         return $epki;
     }
-    
+
     /**
      * @depends testV2FromPEM
      * @depends testCreateV2
@@ -212,7 +211,7 @@ class EncryptedPrivateKeyInfoTest extends TestCase
     {
         $this->assertEquals($ref->toDER(), $new->toDER());
     }
-    
+
     /**
      * @depends testCreateV2
      *
@@ -224,7 +223,7 @@ class EncryptedPrivateKeyInfoTest extends TestCase
         $this->assertInstanceOf(PrivateKeyInfo::class, $pki);
         return $pki;
     }
-    
+
     /**
      * @depends testV2FromPEM
      *
@@ -248,9 +247,8 @@ class EncryptedPrivateKeyInfoTest extends TestCase
         $epki = EncryptedPrivateKeyInfo::encryptWithDerivedKey($pki, $algo, $key);
         $this->assertEquals($refkey->toDER(), $epki->toDER());
     }
-    
+
     /**
-     *
      * @return EncryptedPrivateKeyInfo
      */
     public function testV2AESFromPEM()
@@ -259,7 +257,7 @@ class EncryptedPrivateKeyInfoTest extends TestCase
         $this->assertInstanceOf(EncryptedPrivateKeyInfo::class, $epki);
         return $epki;
     }
-    
+
     /**
      * @depends testV2AESFromPEM
      *
@@ -282,7 +280,7 @@ class EncryptedPrivateKeyInfoTest extends TestCase
         $this->assertInstanceOf(EncryptedPrivateKeyInfo::class, $epki);
         return $epki;
     }
-    
+
     /**
      * @depends testV2AESFromPEM
      * @depends testCreateV2AES
@@ -295,7 +293,7 @@ class EncryptedPrivateKeyInfoTest extends TestCase
     {
         $this->assertEquals($ref->toDER(), $new->toDER());
     }
-    
+
     /**
      * @depends testCreateV2AES
      *
@@ -307,23 +305,19 @@ class EncryptedPrivateKeyInfoTest extends TestCase
         $this->assertInstanceOf(PrivateKeyInfo::class, $pki);
         return $pki;
     }
-    
-    /**
-     * @expectedException UnexpectedValueException
-     */
+
     public function testInvalidAlgo()
     {
-        $seq = new Sequence(new Sequence(new ObjectIdentifier("1.3.6.1.3")),
-            new OctetString(""));
+        $seq = new Sequence(new Sequence(new ObjectIdentifier('1.3.6.1.3')),
+            new OctetString(''));
+        $this->expectException(\UnexpectedValueException::class);
         EncryptedPrivateKeyInfo::fromASN1($seq);
     }
-    
-    /**
-     * @expectedException UnexpectedValueException
-     */
+
     public function testInvalidPEMType()
     {
-        $pem = new PEM("nope", "");
+        $pem = new PEM('nope', '');
+        $this->expectException(\UnexpectedValueException::class);
         EncryptedPrivateKeyInfo::fromPEM($pem);
     }
 }
