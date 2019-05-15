@@ -15,7 +15,7 @@ use Sop\PKCS5\ASN1\AlgorithmIdentifier\PBEAlgorithmIdentifier;
 use Sop\PKCS5\PBEScheme;
 
 /**
- * Implements PKCS #8 <i>EncryptedPrivateKeyInfo</i> ASN.1 type.
+ * Implements PKCS #8 *EncryptedPrivateKeyInfo* ASN.1 type.
  *
  * @see https://tools.ietf.org/html/rfc5208#section-6
  */
@@ -41,8 +41,7 @@ class EncryptedPrivateKeyInfo
      * @param EncryptionAlgorithmIdentifier $algo
      * @param string                        $data Ciphertext
      */
-    protected function __construct(EncryptionAlgorithmIdentifier $algo,
-        string $data)
+    protected function __construct(EncryptionAlgorithmIdentifier $algo, string $data)
     {
         $this->_algo = $algo;
         $this->_data = $data;
@@ -64,9 +63,7 @@ class EncryptedPrivateKeyInfo
             throw new \UnexpectedValueException(
                 sprintf('Algorithm %s not supported.', $algo->name()));
         }
-        $data = $seq->at(1)
-            ->asOctetString()
-            ->string();
+        $data = $seq->at(1)->asOctetString()->string();
         return new self($algo, $data);
     }
 
@@ -93,7 +90,7 @@ class EncryptedPrivateKeyInfo
      */
     public static function fromPEM(PEM $pem): self
     {
-        if (PEM::TYPE_ENCRYPTED_PRIVATE_KEY != $pem->type()) {
+        if (PEM::TYPE_ENCRYPTED_PRIVATE_KEY !== $pem->type()) {
             throw new \UnexpectedValueException('Invalid PEM type.');
         }
         return self::fromDER($pem->data());
@@ -150,8 +147,7 @@ class EncryptedPrivateKeyInfo
     }
 
     /**
-     * Decrypt PrivateKeyInfo from the encrypted data using password based
-     * encryption.
+     * Decrypt PrivateKeyInfo from the encrypted data using password based encryption.
      *
      * @param string      $password Password
      * @param null|Crypto $crypto   Crypto engine, use default if not set
@@ -163,9 +159,8 @@ class EncryptedPrivateKeyInfo
         $ai = $this->_algo;
         if (!($ai instanceof PBEAlgorithmIdentifier)) {
             throw new \RuntimeException(
-                sprintf(
-                    'Algorithm %s does not support' .
-                         ' password based encryption.', $ai->name()));
+                sprintf('Algorithm %s does not support' .
+                    ' password based encryption.', $ai->name()));
         }
         try {
             $scheme = PBEScheme::fromAlgorithmIdentifier($ai, $crypto);
@@ -178,8 +173,7 @@ class EncryptedPrivateKeyInfo
     }
 
     /**
-     * Initialize by encrypting a PrivateKeyInfo using password based
-     * encryption.
+     * Initialize by encrypting a PrivateKeyInfo using password based encryption.
      *
      * @param PrivateKeyInfo         $pki      Private key info
      * @param PBEAlgorithmIdentifier $algo     Encryption algorithm
