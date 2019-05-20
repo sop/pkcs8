@@ -1,35 +1,35 @@
 {
-	"name": "sop/pkcs8",
-	"description": "A PHP implementation of PKCS #8 encrypted private-key.",
-	"homepage": "https://github.com/sop/pkcs8",
-	"license": "MIT",
-	"type": "library",
-	"keywords": [
-		"pkcs8",
-		"encrypt",
-		"private-key"
-	],
-	"authors": [
-		{
-			"name": "Joni Eskelinen",
-			"email": "jonieske@gmail.com",
-			"role": "Developer"
-		}
-	],
-	"require": {
-		"php": ">=7.0",
-		"sop/asn1": "^3.2.0",
-		"sop/crypto-encoding": "^0.2.0",
-		"sop/crypto-types": "^0.2.1",
-		"sop/crypto-bridge": "^0.2.0",
-		"sop/pkcs5": "^0.2.0"
-	},
-	"require-dev": {
-		"phpunit/phpunit": "^6.4"
-	},
-	"autoload": {
-		"psr-4": {
-			"Sop\\PKCS8\\": "lib/PKCS8"
-		}
-	}
+    "name": "sop/pkcs8",
+    "description": "A PHP implementation of PKCS #8 encrypted private-key.",
+    "homepage": "https://github.com/sop/pkcs8",
+    "license": "MIT",
+    "type": "library",
+    "keywords": [
+        "pkcs8",
+        "encrypt",
+        "private-key"
+    ],
+    "authors": [
+        {
+            "name": "Joni Eskelinen",
+            "email": "jonieske@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "sop/asn1": "^3.2.0",
+        "sop/crypto-encoding": "^0.2.0",
+        "sop/crypto-types": "^0.2.1",
+        "sop/crypto-bridge": "^0.2.0",
+        "sop/pkcs5": "^0.2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sop\\PKCS8\\": "lib/PKCS8"
+        }
+    }
 }
